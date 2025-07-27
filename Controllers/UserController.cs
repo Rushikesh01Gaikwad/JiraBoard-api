@@ -1,40 +1,39 @@
-﻿using JiraBoard_api.Context;
+﻿using Microsoft.AspNetCore.Mvc;
 using JiraBoard_api.Modals;
-using Microsoft.AspNetCore.Mvc;
+using JiraBoard_api.Context;
 using Microsoft.EntityFrameworkCore;
 
 namespace JiraBoard_api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class projectDataController : ControllerBase
+    public class UserController : ControllerBase
     {
         private returnData rtn = new returnData();
         private readonly DataContext _dataContext;
 
-        public projectDataController(DataContext dataContext)
+        public UserController(DataContext dataContext)
         {
             _dataContext = dataContext;
         }
 
-
         [HttpPost]
-        public async Task<IActionResult> Insert([FromBody]List<projectData> data)
+        public async Task<IActionResult> Insert([FromBody] User user)
         {
             try
             {
-                if(data != null)
+                if (user != null)
                 {
-                    _dataContext.AddRange(data);
+                    user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+                    _dataContext.Add(user);
                     await _dataContext.SaveChangesAsync();
-                    rtn.data = data;
+                    rtn.data = user;
                     return Ok(rtn);
-
                 }
                 else
                 {
                     rtn.statusCd = 0;
-                    rtn.message = "Data is null here";
+                    rtn.message = "User data is null";
                     return Ok(rtn);
                 }
             }
@@ -51,19 +50,18 @@ namespace JiraBoard_api.Controllers
         {
             try
             {
-                var data = await _dataContext.projects.ToListAsync();
-                if(data != null)
+                var users = await _dataContext.users.ToListAsync();
+                if (users != null)
                 {
-                    rtn.data = data;
+                    rtn.data = users;
                     return Ok(rtn);
                 }
                 else
                 {
                     rtn.statusCd = 0;
-                    rtn.message = "Data is not present on the table";
+                    rtn.message = "No users found";
                     return Ok(rtn);
                 }
-
             }
             catch (Exception ex)
             {
@@ -77,21 +75,21 @@ namespace JiraBoard_api.Controllers
         {
             try
             {
-                var data = await _dataContext.projects.FindAsync(id);
-                if (data != null)
+                var user = await _dataContext.users.FindAsync(id);
+                if (user != null)
                 {
-                    rtn.data = data;
+                    rtn.data = user;
                     return Ok(rtn);
                 }
                 else
                 {
                     rtn.statusCd = 0;
-                    rtn.message = "Record is not present";
+                    rtn.message = "User not found";
                     return Ok(rtn);
                 }
             }
-            catch (Exception ex) 
-            { 
+            catch (Exception ex)
+            {
                 rtn.statusCd = 0;
                 rtn.message = ex.Message;
                 return Ok(rtn);
@@ -99,24 +97,27 @@ namespace JiraBoard_api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] projectData data)
+        public async Task<IActionResult> Update(int id, [FromBody] User user)
         {
             try
             {
-                var existing = await _dataContext.projects.FindAsync(id);
-                if (existing != null)
-                {
-                    _dataContext.Entry(existing).CurrentValues.SetValues(data);
-                    await _dataContext.SaveChangesAsync();
-                    rtn.data= data;
-                    return Ok(rtn);
-                }
-                else
+                if (user == null)
                 {
                     rtn.statusCd = 0;
-                    rtn.message = "Data is not present";
+                    rtn.message = "Invalid user data";
                     return Ok(rtn);
                 }
+                var existingUser = await _dataContext.users.FindAsync(id);
+                if (existingUser == null)
+                {
+                    rtn.statusCd = 0;
+                    rtn.message = "User not found";
+                    return Ok(rtn);
+                }
+                _dataContext.Entry(existingUser).CurrentValues.SetValues(user);
+                await _dataContext.SaveChangesAsync();
+                rtn.data = existingUser;
+                return Ok(rtn);
             }
             catch (Exception ex)
             {
@@ -127,31 +128,29 @@ namespace JiraBoard_api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> delete (int id)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
-                var existing = await _dataContext.projects.FindAsync(id);
-                if (existing != null)
-                {
-                    _dataContext.projects.Remove(existing);
-                    await _dataContext.SaveChangesAsync();
-                    return Ok(rtn);
-                }
-                else
+                var user = await _dataContext.users.FindAsync(id);
+                if (user == null)
                 {
                     rtn.statusCd = 0;
-                    rtn.message = "Id is not present";
+                    rtn.message = "User not found";
                     return Ok(rtn);
                 }
+                _dataContext.users.Remove(user);
+                await _dataContext.SaveChangesAsync();
+                rtn.data = user;
+                return Ok(rtn);
             }
             catch (Exception ex)
             {
-                rtn.statusCd= 0;
+                rtn.statusCd = 0;
                 rtn.message = ex.Message;
                 return Ok(rtn);
             }
         }
-
     }
+
 }

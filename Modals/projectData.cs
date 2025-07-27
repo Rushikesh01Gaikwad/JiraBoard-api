@@ -10,5 +10,7 @@
         public string status { get; set; }
         public string date { get; set; }
         public string time { get; set; }
+        public int userId { get; set; }
+        public User? user { get; set; }
     }
 }
