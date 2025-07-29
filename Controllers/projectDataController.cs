@@ -1,5 +1,6 @@
 ﻿using JiraBoard_api.Context;
 using JiraBoard_api.Modals;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,6 +8,7 @@ namespace JiraBoard_api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class projectDataController : ControllerBase
     {
         private returnData rtn = new returnData();

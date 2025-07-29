@@ -2,6 +2,7 @@
 using JiraBoard_api.Modals;
 using JiraBoard_api.Context;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace JiraBoard_api.Controllers
 {
