@@ -1,4 +1,5 @@
-﻿using JiraBoard_api.Modals;
+﻿using Azure.Core;
+using JiraBoard_api.Modals;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -16,7 +17,7 @@ namespace JiraBoard_api.Services
             _config = config;
         }
 
-        public string generateToken(User user)
+        public TokenModel generateToken(User user)
         {
             try
             {
@@ -28,27 +29,33 @@ namespace JiraBoard_api.Services
                     new Claim(ClaimTypes.Email, user.Email),
                     //new Claim(ClaimTypes.Role, "Manager")
                 };
+
+                var expiration = DateTime.Now.AddMinutes(120); // Short-lived access token
                 var token = new JwtSecurityToken(
                     issuer: _config["Jwt:Issuer"],
                     audience: _config["Jwt:Audience"],
                     claims: claims,
-                    expires: DateTime.Now.AddMinutes(120),
+                    expires: expiration,
                     signingCredentials: cred);
+                var accessToken = new JwtSecurityTokenHandler().WriteToken(token);
 
-                return new JwtSecurityTokenHandler().WriteToken(token);
+                var randomBytes = new byte[64];
+                using var rng = RandomNumberGenerator.Create();
+                rng.GetBytes(randomBytes);
+                var refreshToken =  Convert.ToBase64String(randomBytes);
+
+                return new TokenModel
+                {
+                    AccessToken = accessToken,
+                    RefreshToken = refreshToken,
+                    Expiration = expiration
+                };
+
             }
             catch (Exception ex)
             {
-                return ex.Message;
+                return null;
             }
-        }
-
-        public string GenerateRefreshToken()
-        {
-            var randomBytes = new byte[64];
-            using var rng = RandomNumberGenerator.Create();
-            rng.GetBytes(randomBytes);
-            return Convert.ToBase64String(randomBytes);
         }
     }
 }
