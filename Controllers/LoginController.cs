@@ -61,6 +61,37 @@ namespace JiraBoard_api.Controllers
             }
         }
 
+        [HttpPost("refresh-token")]
+        public IActionResult RefreshToken([FromBody] TokenModel tokenModel)
+        {
+
+            string accessToken = tokenModel.AccessToken;
+            string refreshToken = tokenModel.RefreshToken;
+
+            if (tokenModel is null)
+                return BadRequest("Invalid client request");
+
+            var principal = _jwtService.GetPrincipalFromExpiredToken(accessToken);
+            var email = principal.Identity.Name;
+
+            var user =  _dataContext.users.FirstOrDefault(u => u.Email == email);
+
+            if (user == null || user.RefreshToken != tokenModel.RefreshToken)
+                return BadRequest("Invalid refresh token");
+
+
+            var newToken = _jwtService.generateToken(user);
+
+
+            return Ok( new TokenModel
+            {
+                AccessToken = newToken.AccessToken,
+                RefreshToken = newToken.RefreshToken,
+                Expiration = newToken.Expiration,
+            });
+        }
+
+
 
 
     }
