@@ -7,8 +7,9 @@ using JiraBoard_api.Services;
 
 namespace JiraBoard_api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize]
     public class LoginController : ControllerBase
     {
         private returnData rtn = new returnData();
@@ -21,8 +22,9 @@ namespace JiraBoard_api.Controllers
             _jwtService = jwtTokenService;
         }
 
+        [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> Login(string email, string password)
+        public async Task<ObjectResult> Login(string email, string password)
         {
             try
             {
@@ -37,6 +39,7 @@ namespace JiraBoard_api.Controllers
                                 user = user,
                                 token = token,
                             };
+
                             return Ok(rtn);
                     }
                     else
