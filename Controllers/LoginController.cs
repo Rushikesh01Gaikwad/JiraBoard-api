@@ -64,7 +64,8 @@ namespace JiraBoard_api.Controllers
             }
         }
 
-        [HttpPost("refresh-token")]
+        [HttpPost]
+        [AllowAnonymous]
         public IActionResult RefreshToken([FromBody] TokenModel tokenModel)
         {
 

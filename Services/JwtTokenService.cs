@@ -62,9 +62,9 @@ namespace JiraBoard_api.Services
         {
             var tokenValidationParameters = new TokenValidationParameters
             {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ValidateLifetime = false,
                 ValidateIssuerSigningKey = true,
                 ValidIssuer = _config["JwtIssuer"],
                 ValidAudience = _config["Jwt:Issuer"],
