@@ -30,7 +30,7 @@ namespace JiraBoard_api.Services
                     //new Claim(ClaimTypes.Role, "Manager")
                 };
 
-                var expiration = DateTime.Now.AddMinutes(1); // Short-lived access token
+                var expiration = DateTime.Now.AddMinutes(10); // Short-lived access token
                 var token = new JwtSecurityToken(
                     issuer: _config["Jwt:Issuer"],
                     audience: _config["Jwt:Audience"],

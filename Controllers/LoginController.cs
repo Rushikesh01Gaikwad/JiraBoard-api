@@ -22,8 +22,8 @@ namespace JiraBoard_api.Controllers
             _jwtService = jwtTokenService;
         }
 
-        [AllowAnonymous]
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ObjectResult> Login(string email, string password)
         {
             try
@@ -80,7 +80,7 @@ namespace JiraBoard_api.Controllers
 
             var user =  _dataContext.users.FirstOrDefault(u => u.Email == email);
 
-            if (user == null || user.RefreshToken != tokenModel.RefreshToken)
+            if (user == null)
                 return BadRequest("Invalid refresh token");
 
 

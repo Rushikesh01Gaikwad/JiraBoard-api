@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JiraBoard_api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     [Authorize]
     public class projectDataController : ControllerBase
@@ -21,7 +21,7 @@ namespace JiraBoard_api.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Insert([FromBody]List<projectData> data)
+        public async Task<ObjectResult> Insert([FromBody]List<projectData> data)
         {
             try
             {
@@ -49,7 +49,7 @@ namespace JiraBoard_api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<ObjectResult> Get()
         {
             try
             {

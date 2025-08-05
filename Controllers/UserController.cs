@@ -6,8 +6,9 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace JiraBoard_api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize]
     public class UserController : ControllerBase
     {
         private returnData rtn = new returnData();
