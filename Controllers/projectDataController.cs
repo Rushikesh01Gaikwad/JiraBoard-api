@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JiraBoard_api.Controllers
 {
-    [Route("api/[controller]/[action]")]
-    [ApiController]
     [Authorize]
+    [ApiController]
+    [Route("api/[controller]/[action]")]
     public class projectDataController : ControllerBase
     {
         private returnData rtn = new returnData();

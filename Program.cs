@@ -18,7 +18,6 @@ namespace JiraBoard_api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer("name=ConnectionStrings:DefaultConnection"));
-            builder.Services.AddScoped<JwtTokenService>();
             builder.Services.AddCors(options => {
                 options.AddPolicy("AllowAll", policy => {
                     policy.AllowAnyOrigin()
@@ -27,6 +26,7 @@ namespace JiraBoard_api
                 });
             });
 
+            builder.Services.AddScoped<JwtTokenService>();
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(option =>
             option.TokenValidationParameters = new TokenValidationParameters
             {
@@ -34,8 +34,8 @@ namespace JiraBoard_api
                 ValidateAudience = true,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
-                ValidIssuer = builder.Configuration["JwtIssuer"],
-                ValidAudience = builder.Configuration["Jwt:Issuer"],
+                ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                ValidAudience = builder.Configuration["Jwt:Audience"],
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
 
             });
@@ -50,7 +50,7 @@ namespace JiraBoard_api
             }
 
             app.UseCors("AllowAll");
-
+            app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
 

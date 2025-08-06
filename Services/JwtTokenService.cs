@@ -66,8 +66,8 @@ namespace JiraBoard_api.Services
                 ValidateAudience = false,
                 ValidateLifetime = false,
                 ValidateIssuerSigningKey = true,
-                ValidIssuer = _config["JwtIssuer"],
-                ValidAudience = _config["Jwt:Issuer"],
+                ValidIssuer = _config["Jwt:Issuer"],
+                ValidAudience = _config["Jwt:Audience"],
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]))
             };
 

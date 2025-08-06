@@ -66,7 +66,7 @@ namespace JiraBoard_api.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public IActionResult RefreshToken([FromBody] TokenModel tokenModel)
+        public async Task<IActionResult> RefreshToken([FromBody] TokenModel tokenModel)
         {
 
             string accessToken = tokenModel.AccessToken;
