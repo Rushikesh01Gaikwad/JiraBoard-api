@@ -21,7 +21,7 @@ namespace JiraBoard_api.Controllers
 
 
         [HttpPost]
-        public async Task<ObjectResult> Insert([FromBody]List<projectData> data)
+        public async Task<ObjectResult> Insert([FromBody]projectData data)
         {
             try
             {
